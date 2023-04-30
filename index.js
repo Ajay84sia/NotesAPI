@@ -4,11 +4,28 @@ const { connection } = require('./db')
 const { userRouter } = require('./routes/User.routes')
 const { auth } = require('./middleware/auth.middleware');
 const { noteRouter } = require('./routes/Note.route');
-const app = express()
 require("dotenv").config()
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
+const app = express()
 app.use(cors())
 app.use(express.json())
+
+const options = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'API Documentation',
+        version: '1.0.0',
+      }
+    },
+    apis: ['./routes/*.js'], 
+  };
+  
+  const openapiSpecification = swaggerJsdoc(options);
+  app.use("/api-docs",swaggerUi.serve, swaggerUi.setup(openapiSpecification))
+
 
 app.get("/", (req, res) => {
     res.status(200).send("Basic API Endpoint")
